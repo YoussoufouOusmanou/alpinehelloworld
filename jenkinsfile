@@ -18,19 +18,19 @@ pipeline {
       }
 
 
-       stage('build image'){
+       stage('run container based on builded iamge'){
          agent any
          steps {
          script {
               sh '''
-               docker run --name $IMAGE_NAME -d -p 80:5000 youssoufou/$IAMGE_NAME:$IMAGE_TAG
+                docker run --name $IMAGE_NAME -d -p 80:5000 -e PORT=5000 youssoufou/$IMAGE_NAME:$IMAGE_TAG
               sleep 5
                '''
            }
          }
       }
 
-     stage('build image'){
+     stage('Test image'){
          agent any
          steps {
            script {
@@ -40,7 +40,7 @@ pipeline {
            }
          }
       }
-      stage('build image'){
+      stage('clean container'){
          agent any
          steps {
            script {
@@ -62,9 +62,7 @@ pipeline {
        }
        }
      }
-     stage('build image'){
-         agent any
-         steps {
+    steps {
            script {
               sh '''
               heroku container:login
@@ -75,7 +73,25 @@ pipeline {
            }
          }
       }   
-      
+       stage('Push image in production and deploy it') {
+       when {
+              expression { GIT_BRANCH == 'origin/master' }
+            }
+      agent any
+      environment {
+          HEROKU_API_KEY = credentials('heroku_api_key')
+      }  
+      steps {
+          script {
+            sh '''
+              heroku container:login
+              heroku create $PRODUCTION || echo "project already exist"
+              heroku container:push -a $PRODUCTION web
+              heroku container:release -a $PRODUCTION web
+            '''
+          }
+        }
+
            }
       } 
       
