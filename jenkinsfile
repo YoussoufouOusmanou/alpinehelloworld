@@ -1,0 +1,81 @@
+pipieline {
+    environment {
+    IMAGE_NAME = "alpinehellowordl"
+    IMAGE_TAG = "latest"
+    STAGING = "ousmanou-staging"
+    PRODUCTION = "ousmanou-prod"
+    }
+
+    agent none
+    stages {
+       stage('build image'){
+         agent any
+         steps {
+           script {
+              sh 'docker build -t youssoufou/$IMAGE_NAME:$IMAGE_TAG .'
+           }
+         }
+      }
+
+
+       stage('build image'){
+         agent any
+         steps {
+         script {
+              sh '''
+               docker run --name $IMAGE_NAME -d -p 80:5000 youssoufou/$IAMGE_NAME:$IMAGE_TAG
+              sleep 5
+               '''
+           }
+         }
+      }
+
+     stage('build image'){
+         agent any
+         steps {
+           script {
+              sh '''
+               curl http://localhost | grep -q "hello world!"
+               '''
+           }
+         }
+      }
+      stage('build image'){
+         agent any
+         steps {
+           script {
+              sh '''
+               docker stop $IMAGE_NAME
+               docker rm $IMAGE_NAME
+               '''
+           }
+         }
+      }
+      
+     stage('push image in staging and deploy it'){
+       when {
+          expression { GIT_BRANCH == 'origin/master'
+          }
+       agent any
+       environment {
+         HEROKU_API_KEY = credentials('heroku_api_key')
+       }
+       }
+     }
+     stage('build image'){
+         agent any
+         steps {
+           script {
+              sh '''
+              heroku container:login
+              heroku create $STAGING || echo "projet already existe"
+              heroku container:push -a $STAGING web
+              heroku container:release -a $STAGING web
+               '''
+           }
+         }
+      }   
+      
+           }
+      } 
+      
