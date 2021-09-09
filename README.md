@@ -1,1 +1,1 @@
-[![Build Status](http://ip10-0-6-3-c4t5l6mqrfp08ueqn8qg-8080.direct.docker.labs.eazytraining.fr/job/alpinehelloworld/badge/icon)](http://ip10-0-6-3-c4t5l6mqrfp08ueqn8qg-8080.direct.docker.labs.eazytraining.fr/job/alpinehelloworld/)
+[![Build Status](http://ip10-0-6-3-c4t5l6mqrfp08ueqn8qg-8080.direct.docker.labs.eazytraining.fr/buildStatus/icon?job=alpinehelloworld)](http://ip10-0-6-3-c4t5l6mqrfp08ueqn8qg-8080.direct.docker.labs.eazytraining.fr/job/alpinehelloworld/)
